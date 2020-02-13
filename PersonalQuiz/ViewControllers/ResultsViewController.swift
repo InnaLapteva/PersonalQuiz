@@ -9,22 +9,62 @@
 import UIKit
 
 class ResultsViewController: UIViewController {
-
+    
+    //MARK: Properties
+    var totalAnswers: [Answer] = []
+    
+    //MARK: IB Outlets
+    @IBOutlet var resultLabel: UILabel!
+    @IBOutlet var definitionLabel: UILabel!
+    
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
+        scoreCalculation(answers: totalAnswers)
+    }
+}
 
-        // Do any additional setup after loading the view.
+//MARK: Functions
+
+extension ResultsViewController {
+    
+    private func scoreCalculation(answers: [Answer]) {
+        
+        var scoreDog = 0
+        var scoreCat = 0
+        var scoreRabbit = 0
+        var scoreTurtle = 0
+        
+        var scores:[AnimalType : Int] = [:]
+        
+        for answer in answers {
+            
+            switch answer.animalType {
+            case .cat:
+                scoreCat += 1
+                scores.updateValue(scoreCat, forKey: .cat)
+            case .dog:
+                scoreDog += 1
+                scores.updateValue(scoreDog, forKey: .dog)
+            case .rabbit:
+                scoreRabbit += 1
+                scores.updateValue(scoreRabbit, forKey: .rabbit)
+            case .turtle:
+                scoreTurtle += 1
+                scores.updateValue(scoreTurtle, forKey: .turtle)
+            }
+
+            let sortedScores = scores.sorted { $0.value > $1.value }
+            guard let highestScore = sortedScores.first?.key else { return }
+            
+            updateResults(animal: highestScore)
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func updateResults(animal: AnimalType) {
+        resultLabel.text = "Вы - \(animal.rawValue)"
+        definitionLabel.text = animal.definition
     }
-    */
-
+    
 }
